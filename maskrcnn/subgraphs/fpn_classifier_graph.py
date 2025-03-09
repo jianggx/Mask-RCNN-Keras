@@ -131,7 +131,7 @@ class FPNClassifierGraph():
                 indices = tf.stack([tf.range(probabilities.shape[0]), class_ids], axis=1)
                 class_scores = tf.gather_nd(probabilities, indices)
                 deltas_specific = tf.gather_nd(bounding_boxes, indices)
-                class_ids = tf.to_float(class_ids)
+                class_ids = tf.compat.v1.to_float(class_ids)
                 result = tf.concat(
                     [deltas_specific, tf.expand_dims(class_ids, axis=1), tf.expand_dims(class_scores, axis=1)], axis=1)
                 return result

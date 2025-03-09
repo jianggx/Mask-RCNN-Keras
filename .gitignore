@@ -2,3 +2,5 @@ venv/
 *.pyc
 .idea
 *.egg-info
+
+output_coreml

@@ -1,0 +1,7 @@
+{
+    "architecture" : "resnet50",
+    "input_image_shape" : [512,512,3],
+    "num_classes" : 4,
+    "pre_nms_max_proposals" :  6000,
+    "max_proposals" : 1000
+}

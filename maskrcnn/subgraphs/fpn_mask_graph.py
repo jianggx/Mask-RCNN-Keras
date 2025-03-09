@@ -138,7 +138,8 @@ class FPNMaskGraph():
                 roi = inputs[0]
                 roi_masks = inputs[1]
                 class_id = roi[4]
-                class_id = tf.to_int32(class_id)
+                #class_id = tf.to_int32(class_id)
+                class_id = tf.cast(class_id, tf.int32)
                 return roi_masks[:, :, class_id]
 
             def extract_relevant_class(inputs):

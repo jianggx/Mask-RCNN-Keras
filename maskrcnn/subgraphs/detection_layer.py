@@ -39,7 +39,8 @@ def refine_detections_graph(rois,
         coordinates are normalized.
     """
     # Class IDs per ROI
-    class_ids = tf.to_int32(classifications[:,4])
+    #class_ids = tf.to_int32(classifications[:,4])
+    class_ids = tf.cast(classifications[:,4], tf.int32)
     # Class-specific bounding box deltas
     deltas_specific = classifications[:,0:4]
     # Class probability of the top class of each ROI
@@ -57,7 +58,7 @@ def refine_detections_graph(rois,
     # Filter out low confidence boxes
     if DETECTION_MIN_CONFIDENCE:
         conf_keep = tf.where(class_scores >= DETECTION_MIN_CONFIDENCE)[:, 0]
-        keep = tf.sets.set_intersection(tf.expand_dims(keep, 0),
+        keep = tf.compat.v1.sets.set_intersection(tf.expand_dims(keep, 0),
                                         tf.expand_dims(conf_keep, 0))
         keep = to_dense(keep)[0]
 
@@ -94,7 +95,7 @@ def refine_detections_graph(rois,
     nms_keep = tf.reshape(nms_keep, [-1])
     nms_keep = tf.gather(nms_keep, tf.where(nms_keep > -1)[:, 0])
     # 4. Compute intersection between keep and nms_keep
-    keep = tf.sets.set_intersection(tf.expand_dims(keep, 0),
+    keep = tf.compat.v1.sets.set_intersection(tf.expand_dims(keep, 0),
                                     tf.expand_dims(nms_keep, 0))
     keep = to_dense(keep)[0]
     # Keep top detections
@@ -108,7 +109,7 @@ def refine_detections_graph(rois,
     # Coordinates are normalized.
     detections = tf.concat([
         tf.gather(refined_rois, keep),
-        tf.to_float(tf.gather(class_ids, keep))[..., tf.newaxis],
+        tf.compat.v1.to_float(tf.gather(class_ids, keep))[..., tf.newaxis],
         tf.gather(class_scores, keep)[..., tf.newaxis]
         ], axis=1)
 
