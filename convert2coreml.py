@@ -19,7 +19,7 @@ def export_models(config,
                   mask_model,
                   export_main_path,
                   export_mask_path,
-                  export_anchors_path):
+                  export_classifier_path):
     license = "MIT"
     author = "Édouard Lavery-Plante"
 
@@ -171,7 +171,7 @@ def export_models(config,
     classifier_model_coreml.input_description["feature_map"] = "Fully processed feature map, ready for classification."
     half_classifier_model = convert_neural_network_weights_to_fp16(classifier_model_coreml)
     half_classifier_spec = half_classifier_model.get_spec()
-    save_spec(half_classifier_spec, "output_coreml/Classifier.mlmodel")
+    save_spec(half_classifier_spec, export_classifier_path)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -186,28 +186,14 @@ if __name__ == '__main__':
     parser.add_argument(
         '--weights_path',
         help='Path to weights file',
-        default="maskrcnn_model/floorplan/model/mask_rcnn_floorplan_0030.h5",
+        default="maskrcnn_model/floorplan/model/mask_rcnn_floorplan_0013.h5",
         required=False
     )
 
     parser.add_argument(
-        '--export_main_path',
+        '--export_path',
         help='Path to export main file',
-        default="output_coreml/MaskRCNN.mlmodel",
-        required=False
-    )
-
-    parser.add_argument(
-        '--export_mask_path',
-        help='Path to export mask file',
-        default="output_coreml/Mask.mlmodel",
-        required=False
-    )
-
-    parser.add_argument(
-        '--export_anchors_path',
-        help='Path to export anchors file',
-        default="output_coreml/anchors.bin",
+        default="",
         required=False
     )
 
@@ -216,21 +202,30 @@ if __name__ == '__main__':
     
     config_path = params.pop('config_path')
     weights_path = params.pop('weights_path')
-    export_main_path = params.pop('export_main_path')
-    export_mask_path = params.pop('export_mask_path')
+    export_path = params.pop('export_path')
+    if export_path == '':
+        export_path =  os.path.join( os.path.dirname(weights_path), os.path.basename(weights_path)+'_coreml')
+        os.makedirs(export_path, exist_ok=True)
+
+    export_main_path = os.path.join(export_path, 'MaskRCNN.mlmodel')
+    export_mask_path = os.path.join(export_path, 'Mask.mlmodel')
+    export_classifier_path = os.path.join(export_path, 'Classifier.mlmodel')
     #TODO: remove and generate instead
-    export_anchors_path = params.pop('export_anchors_path')
+    export_anchors_path = os.path.join(export_path, 'anchors.bin')
+
     
     config = Config()
     with open(config_path) as file:
         config_dict = json.load(file)
         config.__dict__.update(config_dict)
 
+    print('weights_path: ', weights_path)
+
     model = MaskRCNNModel(config_path, initial_keras_weights=weights_path)
 
     mask_rcnn_model, classifier_model, mask_model, anchors = model.get_trained_keras_models()
     export_models(config, mask_rcnn_model, classifier_model, mask_model, export_main_path, export_mask_path,
-                  export_anchors_path)
+                  export_classifier_path)
     anchors.tofile(export_anchors_path)
 
 
