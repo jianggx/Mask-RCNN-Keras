@@ -1,7 +1,24 @@
 {
+    "pre_nms_max_proposals" : 6000,
+    "max_proposals" : 1000,
+    "pyramid_top_down_size" : 256,
+    "proposal_nms_threshold" : 0.7,
+    "detection_nms_threshold" : 0.3,
+    "bounding_box_std_dev" : [0.1, 0.1, 0.2, 0.2],
+    "classifier_pool_size" : 7,
+    "mask_pool_size" : 14,
+    "fc_layers_size" : 1024,
+    "anchor_scales" : [16, 32, 64, 128, 256],
+    "anchor_ratios" : [0.25, 1, 4],
+    "anchors_per_location" : 3,
+    "backbone_strides" : [4, 8, 16, 32, 64],
+    "anchor_stride" : 1,
+
     "architecture" : "resnet50",
+    "input_width" : 512,
+    "input_height" : 512,
     "input_image_shape" : [512,512,3],
     "num_classes" : 4,
-    "pre_nms_max_proposals" :  6000,
-    "max_proposals" : 1000
+    "max_detections" : 200,
+    "detection_min_confidence": 0
 }
