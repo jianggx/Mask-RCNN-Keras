@@ -3,4 +3,5 @@ venv/
 .idea
 *.egg-info
 
+maskrcnn_model
 output_coreml
